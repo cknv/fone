@@ -1,3 +1,5 @@
+import slugify
+
 standard_nato = {
     'a': 'alfa',
     'b': 'bravo',
@@ -36,6 +38,7 @@ standard_nato = {
     '7': 'seven',
     '8': 'eight',
     '9': 'niner',
+    '-': 'dash',
 }
 
 
@@ -54,14 +57,15 @@ class Fonos:
         if dialect is None:
             dialect = standard_nato
         self.alphabet = dialect
-        self.lookup = {word: char for char, word in self.alphabet.items()}
+        self.lookup = {
+            word: char
+            for char, word in self.alphabet.items()
+        }
 
     def translate(self, message):
-        for char in message:
-            if char in self.alphabet:
-                yield self.alphabet[char]
+        for char in slugify.slugify(message):
+            yield self.alphabet[char.lower()]
 
     def parse(self, message):
         for word in message.split():
-            if word in self.lookup:
-                yield self.lookup[word]
+            yield self.lookup[word]
